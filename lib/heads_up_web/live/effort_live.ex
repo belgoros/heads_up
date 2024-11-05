@@ -10,6 +10,7 @@ defmodule HeadsUpWeb.EffortLive do
       socket
       |> assign(responders: 0)
       |> assign(minutes_per_responder: 10)
+      |> assign(page_title: "Effort")
 
     {:ok, socket}
   end
