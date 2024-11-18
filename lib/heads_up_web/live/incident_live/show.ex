@@ -11,7 +11,7 @@ defmodule HeadsUpWeb.IncidentLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _uri, socket) do
-    incident = Incidents.get_incident(id)
+    incident = Incidents.get_incident!(id)
 
     socket =
       socket
