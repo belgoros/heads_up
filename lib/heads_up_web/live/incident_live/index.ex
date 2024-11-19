@@ -5,12 +5,13 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   import HeadsUpWeb.Components.CustomComponents
 
   def mount(_params, _session, socket) do
-    incidents = Incidents.filter_incidents()
+    incidents = Incidents.list_incidents()
 
     socket =
       socket
       |> assign(:page_title, "Incidents")
       |> stream(:incidents, incidents)
+      |> assign(:form, to_form(%{}))
 
     {:ok, socket}
   end
@@ -24,6 +25,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
           Thanks for pitching in. <%= vibe %>
         </:tagline>
       </.headline>
+      <.filter_form form={@form} />
       <div class="incidents" id="incidents" phx-update="stream">
         <.incident_card
           :for={{dom_id, incident} <- @streams.incidents}
@@ -32,6 +34,23 @@ defmodule HeadsUpWeb.IncidentLive.Index do
         />
       </div>
     </div>
+    """
+  end
+
+  attr :form, Phoenix.HTML.Form, required: true
+
+  def filter_form(assigns) do
+    ~H"""
+    <.form for={@form}>
+      <.input field={@form[:q]} placeholder="Search..." autocomplete="off" />
+      <.input
+        type="select"
+        prompt="Status"
+        field={@form[:status]}
+        options={Ecto.Enum.values(Incidents.Incident, :status)}
+      />
+      <.input type="select" prompt="Sort By" field={@form[:sort_by]} options={[:name, :priority]} />
+    </.form>
     """
   end
 
