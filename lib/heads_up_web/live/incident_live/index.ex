@@ -4,18 +4,23 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   alias HeadsUp.Incidents
   import HeadsUpWeb.Components.CustomComponents
 
+  @impl true
   def mount(_params, _session, socket) do
-    incidents = Incidents.list_incidents()
-
-    socket =
-      socket
-      |> assign(:page_title, "Incidents")
-      |> stream(:incidents, incidents)
-      |> assign(:form, to_form(%{}))
-
     {:ok, socket}
   end
 
+  @impl true
+  def handle_params(params, _uri, socket) do
+    socket =
+      socket
+      |> assign(:page_title, "Incidents")
+      |> assign(:form, to_form(params))
+      |> stream(:incidents, Incidents.filter_incidents(params))
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <div class="incident-index">
@@ -50,6 +55,9 @@ defmodule HeadsUpWeb.IncidentLive.Index do
         options={Ecto.Enum.values(Incidents.Incident, :status)}
       />
       <.input type="select" prompt="Sort By" field={@form[:sort_by]} options={[:name, :priority]} />
+      <.link navigate={~p"/incidents"}>
+        Reset
+      </.link>
     </.form>
     """
   end
@@ -74,11 +82,14 @@ defmodule HeadsUpWeb.IncidentLive.Index do
     """
   end
 
+  @impl true
   def handle_event("filter", params, socket) do
-    socket =
-      socket
-      |> assign(:form, to_form(params))
-      |> stream(:incidents, Incidents.filter_incidents(params), reset: true)
+    params =
+      params
+      |> Map.take(~w(q status sort_by))
+      |> Map.reject(fn {_, v} -> v == "" end)
+
+    socket = push_navigate(socket, to: ~p"/incidents?#{params}")
 
     {:noreply, socket}
   end
