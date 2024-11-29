@@ -6,22 +6,28 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    IO.inspect(self(), label: "MOUNT")
+
     {:ok, socket}
   end
 
   @impl true
   def handle_params(params, _uri, socket) do
+    IO.inspect(self(), label: "HANDLE_PARAMS")
+
     socket =
       socket
       |> assign(:page_title, "Incidents")
       |> assign(:form, to_form(params))
-      |> stream(:incidents, Incidents.filter_incidents(params))
+      |> stream(:incidents, Incidents.filter_incidents(params), reset: true)
 
     {:noreply, socket}
   end
 
   @impl true
   def render(assigns) do
+    IO.inspect(self(), label: "RENDER")
+
     ~H"""
     <div class="incident-index">
       <.headline>
@@ -54,8 +60,17 @@ defmodule HeadsUpWeb.IncidentLive.Index do
         field={@form[:status]}
         options={Ecto.Enum.values(Incidents.Incident, :status)}
       />
-      <.input type="select" prompt="Sort By" field={@form[:sort_by]} options={[:name, :priority]} />
-      <.link navigate={~p"/incidents"}>
+      <.input
+        type="select"
+        prompt="Sort By"
+        field={@form[:sort_by]}
+        options={[
+          Name: "name",
+          "Priority: High to Low": "priority_asc",
+          "Priority: Low to High": "priority_desc"
+        ]}
+      />
+      <.link patch={~p"/incidents"}>
         Reset
       </.link>
     </.form>
@@ -89,7 +104,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
       |> Map.take(~w(q status sort_by))
       |> Map.reject(fn {_, v} -> v == "" end)
 
-    socket = push_navigate(socket, to: ~p"/incidents?#{params}")
+    socket = push_patch(socket, to: ~p"/incidents?#{params}")
 
     {:noreply, socket}
   end
