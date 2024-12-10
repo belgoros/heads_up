@@ -8,7 +8,7 @@ defmodule HeadsUpWeb.TipHTML do
     <div class="tips">
       <h1>You Like a Tip, Yes?</h1>
       <p>
-        <%= @tip.text %>
+        {@tip.text}
       </p>
     </div>
     """

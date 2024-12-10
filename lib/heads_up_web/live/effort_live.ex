@@ -24,15 +24,15 @@ defmodule HeadsUpWeb.EffortLive do
           + 3
         </button>
         <div>
-          <%= @responders %>
+          {@responders}
         </div>
         &times;
         <div>
-          <%= @minutes_per_responder %>
+          {@minutes_per_responder}
         </div>
         =
         <div>
-          <%= @responders * @minutes_per_responder %>
+          {@responders * @minutes_per_responder}
         </div>
       </section>
       <form phx-submit="recalculate">

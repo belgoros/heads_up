@@ -1,11 +1,11 @@
 <div class="tips">
   <h1>Safety Tips</h1>
-  <%= @emojis %>
+  {@emojis}
   <ol>
     <%= for tip <- @tips do %>
       <li>
         <a href={"/tips/#{tip.id}"}>
-          <%= tip.text %>
+          {tip.text}
         </a>
       </li>
     <% end %>
