@@ -2,19 +2,15 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   use HeadsUpWeb, :live_view
 
   alias HeadsUp.Incidents
-  import HeadsUpWeb.Components.CustomComponents
+  import HeadsUpWeb.CustomComponents
 
   @impl true
   def mount(_params, _session, socket) do
-    IO.inspect(self(), label: "MOUNT")
-
     {:ok, socket}
   end
 
   @impl true
   def handle_params(params, _uri, socket) do
-    IO.inspect(self(), label: "HANDLE_PARAMS")
-
     socket =
       socket
       |> assign(:page_title, "Incidents")
@@ -26,14 +22,12 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
   @impl true
   def render(assigns) do
-    IO.inspect(self(), label: "RENDER")
-
     ~H"""
     <div class="incident-index">
       <.headline>
         <.icon name="hero-trophy-mini" /> 25 Incidents Resolved This Month!
         <:tagline :let={vibe}>
-          Thanks for pitching in. <%= vibe %>
+          Thanks for pitching in. {vibe}
         </:tagline>
       </.headline>
       <.filter_form form={@form} />
@@ -85,11 +79,11 @@ defmodule HeadsUpWeb.IncidentLive.Index do
     <.link navigate={~p"/incidents/#{@incident}"} id={@id}>
       <div class="card">
         <img src={@incident.image_path} />
-        <h2><%= @incident.name %></h2>
+        <h2>{@incident.name}</h2>
         <div class="details">
           <.badge status={@incident.status} />
           <div class="priority">
-            <%= @incident.priority %>
+            {@incident.priority}
           </div>
         </div>
       </div>

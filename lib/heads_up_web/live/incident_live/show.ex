@@ -2,7 +2,7 @@ defmodule HeadsUpWeb.IncidentLive.Show do
   use HeadsUpWeb, :live_view
 
   alias HeadsUp.Incidents
-  import HeadsUpWeb.Components.CustomComponents
+  import HeadsUpWeb.CustomComponents
 
   @impl true
   def mount(_params, _session, socket) do
@@ -33,13 +33,13 @@ defmodule HeadsUpWeb.IncidentLive.Show do
         <section>
           <.badge status={@incident.status} />
           <header>
-            <h2><%= @incident.name %></h2>
+            <h2>{@incident.name}</h2>
             <div class="priority">
-              <%= @incident.priority %>
+              {@incident.priority}
             </div>
           </header>
           <div class="description">
-            <%= @incident.description %>
+            {@incident.description}
           </div>
         </section>
       </div>
@@ -66,13 +66,13 @@ defmodule HeadsUpWeb.IncidentLive.Show do
         </:loading>
         <:failed :let={{:error, reason}}>
           <div class="failed">
-            Whoops: <%= reason %>
+            Whoops: {reason}
           </div>
         </:failed>
         <ul class="incidents">
           <li :for={incident <- result}>
             <.link navigate={~p"/incidents/#{incident}"}>
-              <img src={incident.image_path} /> <%= incident.name %>
+              <img src={incident.image_path} /> {incident.name}
             </.link>
           </li>
         </ul>

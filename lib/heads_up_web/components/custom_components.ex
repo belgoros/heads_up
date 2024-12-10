@@ -1,4 +1,4 @@
-defmodule HeadsUpWeb.Components.CustomComponents do
+defmodule HeadsUpWeb.CustomComponents do
   use HeadsUpWeb, :html
 
   attr :status, :atom, values: [:pending, :resolved, :canceled], default: :pending
@@ -13,7 +13,7 @@ defmodule HeadsUpWeb.Components.CustomComponents do
       @status == :canceled && "text-gray-600 border-gray-600",
       @class
     ]}>
-      <%= @status %>
+      {@status}
     </div>
     """
   end
@@ -27,10 +27,10 @@ defmodule HeadsUpWeb.Components.CustomComponents do
     ~H"""
     <div class="headline">
       <h1>
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </h1>
       <div class="tagline">
-        <%= render_slot(@tagline, @emoji) %>
+        {render_slot(@tagline, @emoji)}
       </div>
     </div>
     """
