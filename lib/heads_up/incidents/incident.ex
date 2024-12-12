@@ -14,10 +14,15 @@ defmodule HeadsUp.Incidents.Incident do
     timestamps(type: :utc_datetime)
   end
 
+  @accepted_attributes [:name, :description, :priority, :status, :image_path]
+  @required_attributes [:name, :description, :priority, :status, :image_path]
+
   @doc false
   def changeset(incident, attrs) do
     incident
-    |> cast(attrs, [:name, :description, :priority, :status, :image_path])
-    |> validate_required([:name, :description, :priority, :status, :image_path])
+    |> cast(attrs, @accepted_attributes)
+    |> validate_required(@required_attributes)
+    |> validate_length(:description, max: 10)
+    |> validate_inclusion(:priority, 1..3)
   end
 end
