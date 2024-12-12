@@ -22,7 +22,7 @@ defmodule HeadsUp.Incidents.Incident do
     incident
     |> cast(attrs, @accepted_attributes)
     |> validate_required(@required_attributes)
-    |> validate_length(:description, max: 10)
+    |> validate_length(:description, min: 10)
     |> validate_inclusion(:priority, 1..3)
   end
 end
