@@ -4,22 +4,17 @@ defmodule HeadsUp.Admin do
   alias HeadsUp.Repo
   import Ecto.Query
 
+  alias HeadsUp.Incidents.Incident
+
   def list_incidents do
     Incident
     |> order_by(desc: :inserted_at)
     |> Repo.all()
   end
 
-  def create_incident(attrs) do
-    IO.inspect(attrs, label: "attrs")
-
-    %Incident{
-      name: attrs["name"],
-      description: attrs["description"],
-      priority: attrs["priority"] |> String.to_integer(),
-      status: attrs["status"] |> String.to_existing_atom(),
-      image_path: attrs["image_path"]
-    }
-    |> Repo.insert!()
+  def create_incident(attrs \\ %{}) do
+    %Incident{}
+    |> Incident.changeset(attrs)
+    |> Repo.insert()
   end
 end
