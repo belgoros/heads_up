@@ -34,10 +34,10 @@ defmodule HeadsUpWeb.Router do
     live "/categories/:id/edit", CategoryLive.Form, :edit
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", HeadsUpWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", HeadsUpWeb do
+    pipe_through :api
+    resources "/urls", UrlController, except: [:new, :edit]
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:heads_up, :dev_routes) do
