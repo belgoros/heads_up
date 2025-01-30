@@ -10,7 +10,7 @@ defmodule HeadsUpWeb.CategoryLive.Index do
       Listing Categories
       <:actions>
         <.button phx-click={JS.dispatch("click", to: {:inner, "a"})}>
-          <.link navigate={~p"/categories/new"}>
+          <.link navigate={~p"/categories/new"} class="button">
             New Category
           </.link>
         </.button>
