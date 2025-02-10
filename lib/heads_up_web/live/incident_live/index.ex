@@ -2,10 +2,14 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   use HeadsUpWeb, :live_view
 
   alias HeadsUp.Incidents
+  alias HeadsUp.Categories
   import HeadsUpWeb.CustomComponents
 
   @impl true
   def mount(_params, _session, socket) do
+    socket =
+      assign(socket, :category_options, Categories.category_names_and_slugs())
+
     {:ok, socket}
   end
 
@@ -30,8 +34,13 @@ defmodule HeadsUpWeb.IncidentLive.Index do
           Thanks for pitching in. {vibe}
         </:tagline>
       </.headline>
-      <.filter_form form={@form} />
+
+      <.filter_form form={@form} category_options={@category_options} />
+
       <div class="incidents" id="incidents" phx-update="stream">
+        <div id="empty" class="hidden no-results only:block">
+          😢 No incidents found. Try changing your filters.
+        </div>
         <.incident_card
           :for={{dom_id, incident} <- @streams.incidents}
           incident={incident}
@@ -42,26 +51,26 @@ defmodule HeadsUpWeb.IncidentLive.Index do
     """
   end
 
-  attr :form, Phoenix.HTML.Form, required: true
-
   def filter_form(assigns) do
     ~H"""
     <.form for={@form} id="filter-form" phx-change="filter" phx-submit="filter">
       <.input field={@form[:q]} placeholder="Search..." autocomplete="off" phx-debounce="500" />
       <.input
         type="select"
-        prompt="Status"
         field={@form[:status]}
-        options={Ecto.Enum.values(Incidents.Incident, :status)}
+        prompt="Status"
+        options={[:pending, :resolved, :canceled]}
       />
+      <.input type="select" field={@form[:category]} prompt="Category" options={@category_options} />
       <.input
         type="select"
-        prompt="Sort By"
         field={@form[:sort_by]}
+        prompt="Sort By"
         options={[
           Name: "name",
           "Priority: High to Low": "priority_asc",
-          "Priority: Low to High": "priority_desc"
+          "Priority: Low to High": "priority_desc",
+          Category: "category"
         ]}
       />
       <.link patch={~p"/incidents"}>
@@ -79,7 +88,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
     <.link navigate={~p"/incidents/#{@incident}"} id={@id}>
       <div class="card">
         <div class="category">
-          <h3>{@incident.category.name}</h3>
+          {@incident.category.name}
         </div>
         <img src={@incident.image_path} />
         <h2>{@incident.name}</h2>
@@ -98,7 +107,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   def handle_event("filter", params, socket) do
     params =
       params
-      |> Map.take(~w(q status sort_by))
+      |> Map.take(~w(q status sort_by category))
       |> Map.reject(fn {_, v} -> v == "" end)
 
     socket = push_patch(socket, to: ~p"/incidents?#{params}")
