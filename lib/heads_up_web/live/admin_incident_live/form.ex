@@ -2,9 +2,15 @@ defmodule HeadsUpWeb.AdminIncidentLive.Form do
   use HeadsUpWeb, :live_view
   alias HeadsUp.Admin
   alias HeadsUp.Incidents.Incident
+  alias HeadsUp.Categories
 
   def mount(params, _session, socket) do
-    {:ok, apply_action(socket, socket.assigns.live_action, params)}
+    socket =
+      socket
+      |> assign(:category_options, Categories.category_names_and_ids())
+      |> apply_action(socket.assigns.live_action, params)
+
+    {:ok, socket}
   end
 
   def render(assigns) do
@@ -30,6 +36,13 @@ defmodule HeadsUpWeb.AdminIncidentLive.Form do
         required
         label="Description"
         phx-debounce="blur"
+      />
+      <.input
+        field={@form[:category_id]}
+        type="select"
+        label="Category"
+        prompt="Choose a category"
+        options={@category_options}
       />
       <.input field={@form[:image_path]} required label="Image path" />
       <:actions>
