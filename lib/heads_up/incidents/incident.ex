@@ -15,8 +15,8 @@ defmodule HeadsUp.Incidents.Incident do
     timestamps(type: :utc_datetime)
   end
 
-  @accepted_attributes [:name, :description, :priority, :status, :image_path]
-  @required_attributes [:name, :description, :priority, :status, :image_path]
+  @accepted_attributes [:name, :description, :priority, :status, :image_path, :category_id]
+  @required_attributes [:name, :description, :priority, :status, :image_path, :category_id]
 
   @doc false
   def changeset(incident, attrs) do
@@ -25,5 +25,6 @@ defmodule HeadsUp.Incidents.Incident do
     |> validate_required(@required_attributes)
     |> validate_length(:description, min: 10)
     |> validate_inclusion(:priority, 1..3)
+    |> assoc_constraint(:category)
   end
 end
