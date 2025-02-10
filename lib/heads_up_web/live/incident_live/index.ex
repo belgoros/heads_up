@@ -78,6 +78,9 @@ defmodule HeadsUpWeb.IncidentLive.Index do
     ~H"""
     <.link navigate={~p"/incidents/#{@incident}"} id={@id}>
       <div class="card">
+        <div class="category">
+          <h3>{@incident.category.name}</h3>
+        </div>
         <img src={@incident.image_path} />
         <h2>{@incident.name}</h2>
         <div class="details">
