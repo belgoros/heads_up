@@ -38,6 +38,7 @@ defmodule HeadsUpWeb.Router do
     pipe_through :api
     resources "/urls", UrlController, except: [:new, :edit]
     get "/incidents", IncidentController, :index
+    get "/incidents/:id", IncidentController, :show
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
