@@ -11,5 +11,11 @@ defmodule HeadsUpWeb.Api.IncidentController do
   def show(conn, %{"id" => id}) do
     incident = Incidents.get_incident!(id)
     render(conn, :show, incident: incident)
+  rescue
+    Ecto.NoResultsError ->
+      conn
+      |> put_status(:not_found)
+      |> put_view(json: HeadsUpWeb.ErrorJSON)
+      |> render(:"404")
   end
 end
