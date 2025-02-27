@@ -56,7 +56,10 @@ defmodule HeadsUp.Categories do
   def get_category!(id), do: Repo.get!(Category, id)
 
   def get_category_with_incidents!(id) do
-    Repo.get!(Category, id) |> Repo.preload(:incidents)
+    case Ecto.UUID.cast(id) do
+      {:ok, uuid} -> Repo.get!(Category, uuid) |> Repo.preload(:incidents)
+      :error -> raise Ecto.NoResultsError, queryable: Category
+    end
   end
 
   @doc """
