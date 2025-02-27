@@ -1,7 +1,7 @@
 defmodule HeadsUpWeb.Api.IncidentController do
   use HeadsUpWeb, :controller
 
-  alias HeadsUp.Incidents
+  alias HeadsUp.{Admin, Incidents}
 
   def index(conn, _params) do
     incidents = Incidents.list_incidents()
@@ -17,5 +17,20 @@ defmodule HeadsUpWeb.Api.IncidentController do
       |> put_status(:not_found)
       |> put_view(json: HeadsUpWeb.ErrorJSON)
       |> render(:"404")
+  end
+
+  def create(conn, %{"incident" => incident_params}) do
+    case Admin.create_incident(incident_params) do
+      {:ok, incident} ->
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", ~p"/api/incidents/#{incident}")
+        |> render(:show, incident: incident)
+
+      {:error, changeset} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render(:error, changeset: changeset)
+    end
   end
 end
