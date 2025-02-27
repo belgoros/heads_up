@@ -1,4 +1,4 @@
-defmodule HeadsUpWeb.UrlJSON do
+defmodule HeadsUpWeb.Api.UrlJSON do
   alias HeadsUp.Urls.Url
 
   @doc """
