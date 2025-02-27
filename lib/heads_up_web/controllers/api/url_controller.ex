@@ -1,4 +1,4 @@
-defmodule HeadsUpWeb.UrlController do
+defmodule HeadsUpWeb.Api.UrlController do
   use HeadsUpWeb, :controller
 
   alias HeadsUp.Urls
