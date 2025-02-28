@@ -6,7 +6,7 @@ defmodule HeadsUpWeb.UserRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="max-w-sm mx-auto">
       <.header class="text-center">
         Register for an account
         <:subtitle>
@@ -32,6 +32,7 @@ defmodule HeadsUpWeb.UserRegistrationLive do
         </.error>
 
         <.input field={@form[:email]} type="email" label="Email" required />
+        <.input field={@form[:username]} label="Username" required />
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
