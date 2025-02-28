@@ -179,6 +179,7 @@ admin =
   %User{}
   |> User.registration_changeset(%{
     email: "admin@example.com",
+    username: "admin",
     password: "supersecret1"
   })
   |> Repo.insert!()
