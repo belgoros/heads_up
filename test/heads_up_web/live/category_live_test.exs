@@ -2,7 +2,7 @@ defmodule HeadsUpWeb.CategoryLiveTest do
   use HeadsUpWeb.ConnCase
 
   import Phoenix.LiveViewTest
-  import HeadsUp.CategoriesFixtures
+  import HeadsUp.{CategoriesFixtures, AccountsFixtures}
 
   @create_attrs %{name: "some name", slug: "some slug"}
   @update_attrs %{name: "some updated name", slug: "some updated slug"}
@@ -13,17 +13,24 @@ defmodule HeadsUpWeb.CategoryLiveTest do
     %{category: category}
   end
 
-  describe "Index" do
-    setup [:create_category]
+  defp create_admin_user(_) do
+    user = user_fixture(%{is_admin: true})
+    %{user: user}
+  end
 
-    test "lists all categories", %{conn: conn, category: category} do
+  describe "Index" do
+    setup [:create_category, :create_admin_user]
+
+    test "lists all categories", %{conn: conn, category: category, user: user} do
+      conn = log_in_user(conn, user)
       {:ok, _index_live, html} = live(conn, ~p"/categories")
 
       assert html =~ "Listing Categories"
       assert html =~ category.name
     end
 
-    test "saves new category", %{conn: conn} do
+    test "saves new category", %{conn: conn, user: user} do
+      conn = log_in_user(conn, user)
       {:ok, index_live, _html} = live(conn, ~p"/categories")
 
       assert {:ok, form_live, _} =
@@ -49,7 +56,8 @@ defmodule HeadsUpWeb.CategoryLiveTest do
       assert html =~ "some name"
     end
 
-    test "updates category in listing", %{conn: conn, category: category} do
+    test "updates category in listing", %{conn: conn, category: category, user: user} do
+      conn = log_in_user(conn, user)
       {:ok, index_live, _html} = live(conn, ~p"/categories")
 
       assert {:ok, form_live, _html} =
@@ -75,7 +83,8 @@ defmodule HeadsUpWeb.CategoryLiveTest do
       assert html =~ "some updated name"
     end
 
-    test "deletes category in listing", %{conn: conn, category: category} do
+    test "deletes category in listing", %{conn: conn, category: category, user: user} do
+      conn = log_in_user(conn, user)
       {:ok, index_live, _html} = live(conn, ~p"/categories")
 
       assert index_live |> element("#categories-#{category.id} a", "Delete") |> render_click()
@@ -84,16 +93,20 @@ defmodule HeadsUpWeb.CategoryLiveTest do
   end
 
   describe "Show" do
-    setup [:create_category]
+    setup [:create_category, :create_admin_user]
 
-    test "displays category", %{conn: conn, category: category} do
+    test "displays category", %{conn: conn, category: category, user: user} do
+      conn = log_in_user(conn, user)
+
       {:ok, _show_live, html} = live(conn, ~p"/categories/#{category}")
 
       assert html =~ "Show Category"
       assert html =~ category.name
     end
 
-    test "updates category and returns to show", %{conn: conn, category: category} do
+    test "updates category and returns to show", %{conn: conn, category: category, user: user} do
+      conn = log_in_user(conn, user)
+
       {:ok, show_live, _html} = live(conn, ~p"/categories/#{category}")
 
       assert {:ok, form_live, _} =

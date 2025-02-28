@@ -40,7 +40,7 @@ defmodule HeadsUp.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password, :username])
+    |> cast(attrs, [:email, :password, :username, :is_admin])
     |> validate_email(opts)
     |> validate_password(opts)
     |> validate_username()
