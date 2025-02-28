@@ -27,6 +27,10 @@ defmodule HeadsUpWeb.Router do
     live "/effort", EffortLive
     live "/incidents", IncidentLive.Index
     live "/incidents/:id", IncidentLive.Show
+  end
+
+  scope "/", HeadsUpWeb do
+    pipe_through [:browser, :require_authenticated_user]
     live "/admin/incidents", AdminIncidentLive.Index
     live "/admin/incidents/new", AdminIncidentLive.Form, :new
     live "/admin/incidents/:id/edit", AdminIncidentLive.Form, :edit
