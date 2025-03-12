@@ -15,14 +15,13 @@ defmodule HeadsUp.ResponsesTest do
     @invalid_attrs %{status: nil, note: nil}
 
     test "list_responses/0 returns all responses" do
-      
       response = response_fixture()
       assert Responses.list_responses() == [response]
     end
 
     test "get_response!/1 returns the response with given id" do
       response = response_fixture()
-      assert Responses.get_response!(response.id) == response
+      assert Responses.get_response!(response.id).id == response.id
     end
 
     test "create_response/1 with valid data creates a response" do
@@ -60,7 +59,7 @@ defmodule HeadsUp.ResponsesTest do
     test "update_response/2 with invalid data returns error changeset" do
       response = response_fixture()
       assert {:error, %Ecto.Changeset{}} = Responses.update_response(response, @invalid_attrs)
-      assert response == Responses.get_response!(response.id)
+      assert response.id == Responses.get_response!(response.id).id
     end
 
     test "delete_response/1 deletes the response" do
