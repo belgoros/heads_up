@@ -8,6 +8,24 @@ defmodule HeadsUp.Incidents do
     Repo.all(Incident)
   end
 
+  @doc """
+  Creates an incident.
+
+  ## Examples
+
+      iex> create_incident(%{field: value})
+      {:ok, %Incident{}}
+
+      iex> create_incident(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_incident(attrs \\ %{}) do
+    %Incident{}
+    |> Incident.changeset(attrs)
+    |> Repo.insert()
+  end
+
   def filter_incidents(filter) do
     Incident
     |> with_status(filter["status"])
