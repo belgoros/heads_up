@@ -14,15 +14,14 @@ defmodule HeadsUp.ResponsesFixtures do
     user = user_fixture()
     incident = incident_fixture()
 
-    {:ok, response} =
+    attrs =
       attrs
       |> Enum.into(%{
         note: "some note",
-        status: :enroute,
-        user_id: user.id,
-        incident_id: incident.id
+        status: :enroute
       })
-      |> HeadsUp.Responses.create_response()
+
+    {:ok, response} = HeadsUp.Responses.create_response(incident, user, attrs)
 
     response
   end
