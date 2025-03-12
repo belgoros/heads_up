@@ -5,6 +5,8 @@ defmodule HeadsUp.ResponsesTest do
 
   describe "responses" do
     alias HeadsUp.Responses.Response
+    alias HeadsUp.Incidents.Incident
+    alias HeadsUp.Accounts.User
 
     import HeadsUp.ResponsesFixtures
     import HeadsUp.AccountsFixtures
@@ -13,6 +15,7 @@ defmodule HeadsUp.ResponsesTest do
     @invalid_attrs %{status: nil, note: nil}
 
     test "list_responses/0 returns all responses" do
+      
       response = response_fixture()
       assert Responses.list_responses() == [response]
     end
@@ -33,13 +36,16 @@ defmodule HeadsUp.ResponsesTest do
         incident_id: incident.id
       }
 
-      assert {:ok, %Response{} = response} = Responses.create_response(valid_attrs)
+      assert {:ok, %Response{} = response} =
+               Responses.create_response(incident, user, valid_attrs)
+
       assert response.status == :enroute
       assert response.note == "some note"
     end
 
     test "create_response/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Responses.create_response(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} =
+               Responses.create_response(%Incident{}, %User{}, @invalid_attrs)
     end
 
     test "update_response/2 with valid data updates the response" do
