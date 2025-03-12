@@ -7,6 +7,8 @@ defmodule HeadsUp.ResponsesTest do
     alias HeadsUp.Responses.Response
 
     import HeadsUp.ResponsesFixtures
+    import HeadsUp.AccountsFixtures
+    import HeadsUp.IncidentsFixtures
 
     @invalid_attrs %{status: nil, note: nil}
 
@@ -21,7 +23,15 @@ defmodule HeadsUp.ResponsesTest do
     end
 
     test "create_response/1 with valid data creates a response" do
-      valid_attrs = %{status: :enroute, note: "some note"}
+      user = user_fixture()
+      incident = incident_fixture()
+
+      valid_attrs = %{
+        status: :enroute,
+        note: "some note",
+        user_id: user.id,
+        incident_id: incident.id
+      }
 
       assert {:ok, %Response{} = response} = Responses.create_response(valid_attrs)
       assert response.status == :enroute
