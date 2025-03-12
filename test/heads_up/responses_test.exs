@@ -15,7 +15,6 @@ defmodule HeadsUp.ResponsesTest do
     @invalid_attrs %{status: nil, note: nil}
 
     test "list_responses/0 returns all responses" do
-      
       response = response_fixture()
       assert Responses.list_responses() == [response]
     end
