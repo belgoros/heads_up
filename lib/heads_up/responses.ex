@@ -37,7 +37,7 @@ defmodule HeadsUp.Responses do
       ** (Ecto.NoResultsError)
 
   """
-  def get_response!(id), do: Repo.get!(Response, id)
+  def get_response!(id), do: Repo.get!(Response, id) |> Repo.preload([:user, :incident])
 
   @doc """
   Creates a response.
