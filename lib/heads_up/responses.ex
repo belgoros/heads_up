@@ -20,7 +20,7 @@ defmodule HeadsUp.Responses do
 
   """
   def list_responses do
-    Repo.all(Response)
+    Repo.all(Response) |> Repo.preload([:user, :incident])
   end
 
   @doc """
