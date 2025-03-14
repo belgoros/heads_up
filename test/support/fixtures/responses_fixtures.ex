@@ -23,6 +23,8 @@ defmodule HeadsUp.ResponsesFixtures do
 
     {:ok, response} = HeadsUp.Responses.create_response(incident, user, attrs)
 
-    response
+    # Fetch created response so incident and user associations
+    # aren't loaded which the tests don't expect.
+    HeadsUp.Responses.get_response!(response.id)
   end
 end

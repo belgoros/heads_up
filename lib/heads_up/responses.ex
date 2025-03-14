@@ -20,7 +20,7 @@ defmodule HeadsUp.Responses do
 
   """
   def list_responses do
-    Repo.all(Response) |> Repo.preload([:user, :incident])
+    Repo.all(Response)
   end
 
   @doc """
@@ -37,7 +37,8 @@ defmodule HeadsUp.Responses do
       ** (Ecto.NoResultsError)
 
   """
-  def get_response!(id), do: Repo.get!(Response, id) |> Repo.preload([:user, :incident])
+  # |> Repo.preload([:user, :incident])
+  def get_response!(id), do: Repo.get!(Response, id)
 
   @doc """
   Creates a response.
