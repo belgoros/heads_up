@@ -12,11 +12,20 @@ defmodule HeadsUp.Incidents.Incident do
     field :image_path, :string, default: "/images/placeholder.jpg"
     belongs_to :category, HeadsUp.Categories.Category
     has_many :responses, HeadsUp.Responses.Response
+    belongs_to :heroic_response, HeadsUp.Responses.Response
 
     timestamps(type: :utc_datetime)
   end
 
-  @accepted_attributes [:name, :description, :priority, :status, :image_path, :category_id]
+  @accepted_attributes [
+    :name,
+    :description,
+    :priority,
+    :status,
+    :image_path,
+    :category_id,
+    :heroic_response_id
+  ]
   @required_attributes [:name, :description, :priority, :status, :image_path, :category_id]
 
   @doc false
