@@ -88,8 +88,12 @@ defmodule HeadsUp.Incidents do
 
   def get_incident!(id) do
     case Ecto.UUID.cast(id) do
-      {:ok, uuid} -> Repo.get!(Incident, uuid) |> Repo.preload(:category)
-      :error -> raise Ecto.NoResultsError, queryable: Incident
+      {:ok, uuid} ->
+        Repo.get!(Incident, uuid)
+        |> Repo.preload([:category, heroic_response: :user])
+
+      :error ->
+        raise Ecto.NoResultsError, queryable: Incident
     end
   end
 
