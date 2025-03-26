@@ -9,6 +9,7 @@ defmodule HeadsUp.Responses do
   alias HeadsUp.Responses.Response
   alias HeadsUp.Accounts.User
   alias HeadsUp.Incidents.Incident
+  alias HeadsUp.Incidents
 
   @doc """
   Returns the list of responses.
@@ -56,6 +57,14 @@ defmodule HeadsUp.Responses do
     %Response{incident: incident, user: user}
     |> Response.changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, response} ->
+        Incidents.broadcast(incident.id, {:response_created, response})
+        {:ok, response}
+
+      {:error, _} = error ->
+        error
+    end
   end
 
   @doc """
