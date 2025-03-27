@@ -2,6 +2,7 @@ defmodule HeadsUpWeb.AdminUsersLive.Index do
   use HeadsUpWeb, :live_view
 
   alias HeadsUp.Admin
+  import HeadsUpWeb.CustomComponents
 
   def mount(_params, _session, socket) do
     socket =
@@ -28,7 +29,7 @@ defmodule HeadsUpWeb.AdminUsersLive.Index do
         </:col>
 
         <:col :let={{_dom_id, user}} label="Admin">
-          {user.is_admin}
+          <.admin_badge admin={user.is_admin} />
         </:col>
       </.table>
     </div>

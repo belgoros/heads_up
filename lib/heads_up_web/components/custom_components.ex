@@ -18,6 +18,22 @@ defmodule HeadsUpWeb.CustomComponents do
     """
   end
 
+  attr :admin, :boolean
+  attr :class, :string, default: nil
+
+  def admin_badge(assigns) do
+    ~H"""
+    <div class={[
+      "inline-block px-2 py-1 text-xs font-medium uppercase border rounded-md",
+      @admin == true && "text-lime-600 border-lime-600",
+      @admin == false && "text-amber-600 border-amber-600",
+      @class
+    ]}>
+      <.icon name="hero-shield-check" class="w-5 h-5" />
+    </div>
+    """
+  end
+
   slot :inner_block, required: true
   slot :tagline
 
