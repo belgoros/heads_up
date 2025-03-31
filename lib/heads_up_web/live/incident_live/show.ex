@@ -25,6 +25,7 @@ defmodule HeadsUpWeb.IncidentLive.Show do
 
     if connected?(socket) do
       Incidents.subscribe(id)
+      Phoenix.PubSub.subscribe(HeadsUp.PubSub, "updates:" <> topic(id))
 
       if current_user do
         {:ok, _} =
@@ -244,6 +245,18 @@ defmodule HeadsUpWeb.IncidentLive.Show do
   @impl true
   def handle_info({:incident_updated, incident}, socket) do
     {:noreply, assign(socket, :incident, incident)}
+  end
+
+  def handle_info({:user_joined, presence}, socket) do
+    {:noreply, stream_insert(socket, :presences, presence)}
+  end
+
+  def handle_info({:user_left, presence}, socket) do
+    if presence.metas == [] do
+      {:noreply, stream_delete(socket, :presences, presence)}
+    else
+      {:noreply, stream_insert(socket, :presences, presence)}
+    end
   end
 
   defp topic(id) do
