@@ -4,6 +4,7 @@ defmodule HeadsUpWeb.IncidentLive.Show do
   alias HeadsUp.Incidents
   alias HeadsUp.Responses
   alias HeadsUp.Responses.Response
+  alias HeadsUpWeb.Presence
 
   import HeadsUpWeb.CustomComponents
 
@@ -20,18 +21,34 @@ defmodule HeadsUpWeb.IncidentLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _uri, socket) do
+    %{current_user: current_user} = socket.assigns
+
     if connected?(socket) do
       Incidents.subscribe(id)
+
+      if current_user do
+        {:ok, _} =
+          Presence.track(self(), topic(id), current_user.username, %{
+            online_at: System.system_time(:second)
+          })
+      end
     end
 
     incident = Incidents.get_incident!(id)
 
     responses = Incidents.list_responses(incident)
 
+    presences =
+      Presence.list(topic(id))
+      |> Enum.map(fn {username, %{metas: metas}} ->
+        %{id: username, metas: metas}
+      end)
+
     socket =
       socket
       |> assign(:incident, incident)
       |> stream(:responses, responses)
+      |> stream(:presences, presences)
       |> assign(:response_count, Enum.count(responses))
       |> assign(:page_title, incident.name)
       |> assign_async(:urgent_incidents, fn ->
@@ -105,6 +122,7 @@ defmodule HeadsUpWeb.IncidentLive.Show do
         </div>
         <div class="right">
           <.urgent_incidents incidents={@urgent_incidents} />
+          <.onlookers :if={@current_user} presences={@streams.presences} />
         </div>
       </div>
       <.back navigate={~p"/incidents"}>All Incidents</.back>
@@ -168,6 +186,20 @@ defmodule HeadsUpWeb.IncidentLive.Show do
     """
   end
 
+  def onlookers(assigns) do
+    ~H"""
+    <section>
+      <h4>Onlookers</h4>
+      <ul class="presences" id="onlookers" phx-update="stream">
+        <li :for={{dom_id, %{id: username, metas: metas}} <- @presences} id={dom_id}>
+          <.icon name="hero-user-circle-solid" class="w-5 h-5" />
+          {username} ({length(metas)})
+        </li>
+      </ul>
+    </section>
+    """
+  end
+
   @impl true
   def handle_event("validate", %{"response" => response_params}, socket) do
     changeset = Responses.change_response(%Response{}, response_params)
@@ -212,5 +244,9 @@ defmodule HeadsUpWeb.IncidentLive.Show do
   @impl true
   def handle_info({:incident_updated, incident}, socket) do
     {:noreply, assign(socket, :incident, incident)}
+  end
+
+  defp topic(id) do
+    "incident_onlookers:#{id}"
   end
 end
