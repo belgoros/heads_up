@@ -25,13 +25,11 @@ defmodule HeadsUpWeb.IncidentLive.Show do
 
     if connected?(socket) do
       Incidents.subscribe(id)
-      Phoenix.PubSub.subscribe(HeadsUp.PubSub, "updates:" <> topic(id))
 
       if current_user do
-        {:ok, _} =
-          Presence.track(self(), topic(id), current_user.username, %{
-            online_at: System.system_time(:second)
-          })
+        Presence.track_user(id, current_user)
+
+        Presence.subscribe(id)
       end
     end
 
@@ -39,11 +37,7 @@ defmodule HeadsUpWeb.IncidentLive.Show do
 
     responses = Incidents.list_responses(incident)
 
-    presences =
-      Presence.list(topic(id))
-      |> Enum.map(fn {username, %{metas: metas}} ->
-        %{id: username, metas: metas}
-      end)
+    presences = Presence.list_users(id)
 
     socket =
       socket
@@ -257,9 +251,5 @@ defmodule HeadsUpWeb.IncidentLive.Show do
     else
       {:noreply, stream_insert(socket, :presences, presence)}
     end
-  end
-
-  defp topic(id) do
-    "incident_onlookers:#{id}"
   end
 end
